@@ -1,0 +1,56 @@
+.landing-container {
+  margin-top: 10vh;
+  color: #94a3b8;
+}
+
+.landing-title {
+  color: white !important;
+  font-weight: 800 !important;
+  letter-spacing: -1px !important;
+}
+
+.highlight {
+  color: #7c3aed; /* Your accent purple */
+  text-shadow: 0 0 20px rgba(124, 58, 237, 0.5);
+}
+
+.landing-subtitle {
+  color: #64748b !important;
+  max-width: 500px;
+  margin: 20px auto 0 !important;
+}
+
+/* Floating Animation for Icons */
+.icon-group {
+  position: relative;
+  height: 120px;
+  width: 120px;
+}
+
+.floating-icon {
+  position: absolute;
+  font-size: 3rem !important;
+  color: #7c3aed;
+  filter: drop-shadow(0 0 10px rgba(124, 58, 237, 0.4));
+  animation: float 3s ease-in-out infinite;
+}
+
+.code { top: 10px; left: 0; animation-delay: 0s; }
+.analytics { top: 40px; right: 0; color: #00d1ff; animation-delay: 1s; }
+.stats { bottom: 0; left: 35px; color: #fbbf24; animation-delay: 2s; }
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
+}
+
+.feature-grid {
+  margin-top: 40px !important;
+  opacity: 0.6;
+}
+
+.feature-item {
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-weight: bold !important;
+}

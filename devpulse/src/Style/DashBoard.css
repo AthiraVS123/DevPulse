@@ -1,0 +1,100 @@
+:root {
+  --bg-dark: #080b1a;
+  --card-bg: #121629;
+  --accent-purple: #7c3aed;
+  --accent-cyan: #00d1ff;
+  --text-muted: #94a3b8;
+  --neon-glow: 0 0 15px rgba(124, 58, 237, 0.3);
+}
+
+.dashboard-container {
+  background-color: var(--bg-dark);
+  padding: 20px;
+  min-height: 100vh;
+  color: white;
+}
+
+.glass-card {
+  background-color: var(--card-bg) !important;
+  border: 1px solid rgba(124, 58, 237, 0.2) !important;
+  border-radius: 16px !important;
+  padding: 20px;
+  color: white !important;
+  box-shadow: var(--neon-glow) !important;
+}
+
+/* Profile Card Specifics */
+.profile-avatar {
+  width: 100px !important;
+  height: 100px !important;
+  margin: 0 auto;
+  border: 3px solid var(--accent-purple);
+  box-shadow: 0 0 20px var(--accent-purple);
+}
+
+.github-btn {
+  background: transparent;
+  border: 1px solid var(--text-muted);
+  color: white;
+  padding: 8px 20px;
+  border-radius: 8px;
+  margin-top: 15px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.github-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.stats-row {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 25px;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 10px;
+  border-radius: 12px;
+}
+
+.stat-val { font-weight: bold !important; font-size: 1.1rem !important; }
+.stat-label { font-size: 0.7rem !important; color: var(--text-muted); text-transform: uppercase; }
+
+/* Mid Section Boxes */
+.val-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.val { font-weight: 800 !important; }
+.label { color: var(--text-muted); font-size: 0.85rem !important; }
+
+.icon-star { color: #fbbf24; font-size: 2rem !important; }
+.icon-fork { color: var(--accent-cyan); font-size: 2rem !important; }
+
+/* Heatmap & Repo Styles */
+.heatmap-placeholder {
+  height: 120px;
+  background: linear-gradient(90deg, #1e293b 25%, #334155 50%, #1e293b 75%);
+  background-size: 200% 100%;
+  border-radius: 8px;
+  margin-top: 10px;
+}
+
+.repo-item {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 12px 0;
+}
+
+.repo-name { color: var(--accent-cyan); font-weight: bold !important; }
+.lang-dot {
+  height: 8px;
+  width: 8px;
+  background-color: var(--accent-cyan);
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 5px;
+}
+
+.repo-meta { display: flex; gap: 15px; align-items: center; margin: 4px 0; }
