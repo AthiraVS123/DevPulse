@@ -3,7 +3,7 @@ import * as yup from "yup";
 //      a js schema builder (library) 
 //     validate at runtime 
 //      devlop schema using chaimed methods(field typs [string,number,date..] amd contraints[.email(),.required()..])
-
+/////////////
 export const loginSchema = yup.object({
   email: yup
     .string()
