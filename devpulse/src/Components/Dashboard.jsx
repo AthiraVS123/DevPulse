@@ -1,38 +1,101 @@
-import React from 'react';
+import React ,{useState,useEffect} from 'react';
 import { Box, Grid, Paper, Typography, Avatar, LinearProgress } from '@mui/material';
 import { Star, ForkLeft, Language, GitHub } from '@mui/icons-material';
 import '../Style/DashBoard.css';
 
-const DashboardBody = () => {
+const DashboardBody = ({userName}) => {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+//Api calls..when the userName changes 
+useEffect(() => {
+  if (!userName) return;
+
+  const fetchUser = async () => {
+    try {
+      setLoading(true);
+      setError("");
+
+      const res = await fetch(
+        `https://api.github.com/users/${userName}`
+      );
+      const data = await res.json();
+
+      if (data.message === "Not Found") {
+        setError("User not found");
+        setUser(null);
+      } else {
+        setUser(data);
+      }
+
+      setLoading(false);
+    } catch (err) {
+      setError("Something went wrong");
+      setLoading(false);
+    }
+  };
+
+  fetchUser();
+}, [userName]);
+
+
   return (
     <Box className="dashboard-container">
       <Grid container spacing={3}>
-        
-        {/* LEFT SIDEBAR: Profile Card */}
+        {loading && <p>Loading...</p>}
+        {error && <p>{error}</p>}
+        {/* Left sidebar: Profile Card */}
         <Grid item xs={12} md={3}>
           <Paper className="glass-card profile-card">
-            <Avatar 
+            {/* <Avatar 
               src="https://via.placeholder.com/150" 
               className="profile-avatar"
+            /> */}
+            <Avatar 
+              src={user?.avatar_url} 
+              className="profile-avatar"
             />
-            <Typography variant="h5" className="text-white bold mt-2">Alex Rivera</Typography>
-            <Typography variant="body2" className="text-muted">@alexdev</Typography>
-            <Typography variant="body1" className="text-white bio">
-              Building the future with code. Open source enthusiast.
+            {user && (
+          <>
+            <Typography variant="h5" className="text-white bold mt-2">
+              {user.name || user.login}
             </Typography>
-            <button className="github-btn">View on GitHub</button>
+
+            <Typography variant="body2" className="text-muted">
+              @{user.login}
+            </Typography>
+          </>
+        )}
+            {/* here username passed as a prop 
+            <Typography variant="h5" className="text-white bold mt-2">{userName}</Typography> */}
+            {/* <Typography variant="h5" className="text-white bold mt-2">Alex Rivera</Typography> */}
+            {/* <Typography variant="body2" className="text-muted">@alexdev</Typography> */}
+            <Typography variant="body1" className="text-white bio">
+               {user?.bio || "No bio available"}.
+            </Typography>
+            <a href={user?.html_url} target="_blank">
+              <button className="github-btn">View on GitHub</button>
+            </a>
             
             <Box className="stats-row">
               <div className="mini-stat">
-                <Typography className="stat-val">128</Typography>
+                <Typography className="stat-val">
+                  {user?.followers}
+                </Typography>
                 <Typography className="stat-label">Followers</Typography>
               </div>
+
               <div className="mini-stat">
-                <Typography className="stat-val">90</Typography>
+                <Typography className="stat-val">
+                  {user?.following}
+                </Typography>
                 <Typography className="stat-label">Following</Typography>
               </div>
+
               <div className="mini-stat">
-                <Typography className="stat-val">45</Typography>
+                <Typography className="stat-val">
+                  {user?.public_repos}
+                </Typography>
                 <Typography className="stat-label">Public Repos</Typography>
               </div>
             </Box>

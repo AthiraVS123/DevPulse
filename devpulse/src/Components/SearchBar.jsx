@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { AppBar, Toolbar, Typography, InputBase, Button, Box, styled } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import '../Style/SearchBar.css'
+
 
 const SearchContainer = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -32,7 +33,23 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-const SearchBar = () => {
+const SearchBar = ({onAnalyze}) => {
+  const [state,setState]=useState("");
+  function handleChange(e){
+    setState(e.target.value);
+
+  }
+  function handleSubmit(e){
+    e.preventDefault();
+    // o submit needs to call the function
+    if(onAnalyze){
+      onAnalyze(state)
+    }
+    setState("");
+    console.log("username",state);
+  }
+  //call the function 
+  
   return (
     <AppBar 
       position="static" 
@@ -63,15 +80,15 @@ const SearchBar = () => {
 
         {/* 2. Search Field Area */}
         <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center' }}>
-          <SearchContainer>
-            <StyledInputBase
+          <SearchContainer >
+            <StyledInputBase onChange={handleChange}
               placeholder="Enter GitHub username"
               inputProps={{ 'aria-label': 'search github' }}
             />
           </SearchContainer>
           
           {/* 3. Analyze Button */}
-          <Button 
+          <Button onClick={handleSubmit}
             variant="contained" 
             sx={{ 
               borderRadius: '10px',
