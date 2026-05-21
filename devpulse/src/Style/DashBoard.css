@@ -11,14 +11,16 @@
   background-color: var(--bg-dark);
   padding: 20px;
   min-height: 100vh;
+  height: auto;
+  overflow-y: auto;
   color: white;
 }
 
-.glass-card {
+.glass-card{
   background-color: var(--card-bg) !important;
   border: 1px solid rgba(124, 58, 237, 0.2) !important;
   border-radius: 16px !important;
-  padding: 20px;
+  padding: 12px;
   color: white !important;
   box-shadow: var(--neon-glow) !important;
 }
@@ -81,7 +83,6 @@
   border-radius: 8px;
   margin-top: 10px;
 }
-
 .repo-item {
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   padding: 12px 0;
@@ -98,3 +99,20 @@
 }
 
 .repo-meta { display: flex; gap: 15px; align-items: center; margin: 4px 0; }
+.glass-card .chart-container {
+  margin-top: 0;
+}
+.chart-container {
+  background: rgba(17, 25, 40, 0.75);
+  border: 1px solid rgba(139, 92, 246, 0.4);
+  border-radius: 20px;
+  padding: 16px;
+  box-shadow: 0 0 25px rgba(139, 92, 246, 0.25);
+  backdrop-filter: blur(12px);
+}
+.profile-card{
+    height:70vh;
+}
+.repo-list {
+  scroll-behavior: smooth;
+}

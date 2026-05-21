@@ -2,43 +2,86 @@ import React ,{useState,useEffect} from 'react';
 import { Box, Grid, Paper, Typography, Avatar, LinearProgress } from '@mui/material';
 import { Star, ForkLeft, Language, GitHub } from '@mui/icons-material';
 import '../Style/DashBoard.css';
+import LanguagePieChart from './LanguageChart';
+import {GitHubCalendar} from "react-github-calendar";
 
-const DashboardBody = ({userName}) => {
+
+const DashboardBody = ({ userName }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-//Api calls..when the userName changes 
-useEffect(() => {
-  if (!userName) return;
+  const [repos, setRepos] = useState([]);
 
-  const fetchUser = async () => {
-    try {
-      setLoading(true);
-      setError("");
+  // Api calls..when the userName changes
+  useEffect(() => {
+    if (!userName) return;
 
-      const res = await fetch(
-        `https://api.github.com/users/${userName}`
-      );
-      const data = await res.json();
+    const fetchUser = async () => {
+      try {
+        setLoading(true);
+        setError("");
 
-      if (data.message === "Not Found") {
-        setError("User not found");
-        setUser(null);
-      } else {
-        setUser(data);
+        // user api
+        const res = await fetch(
+          `https://api.github.com/users/${userName}`
+        );
+
+        const data = await res.json();
+
+        // repo api
+        const repores = await fetch(data.repos_url);
+        const repodata = await repores.json();
+
+        if (data.message === "Not Found") {
+          setError("User not found");
+          setUser(null);
+        } else {
+          setUser(data);
+          setRepos(repodata);
+        }
+
+        setLoading(false);
+      } catch (err) {
+        setError("Something went wrong");
+        setLoading(false);
       }
+    };
 
-      setLoading(false);
-    } catch (err) {
-      setError("Something went wrong");
-      setLoading(false);
+    fetchUser();
+  }, [userName]);
+
+  const totalStars = repos.reduce((sum, repo) => {
+    return sum + repo.stargazers_count;
+  }, 0);
+
+  const totalForks = repos.reduce((sum, repo) => {
+    return sum + repo.forks_count;
+  }, 0);
+
+  // language pie chart
+  const languageData = repos.reduce((acc, repo) => {
+    const lang = repo.language;
+
+    if (!lang) return acc;
+
+    const existing = acc.find((item) => item.name === lang);
+
+    if (existing) {
+      existing.value += 1;
+    } else {
+      acc.push({
+        name: lang,
+        value: 1,
+      });
     }
-  };
 
-  fetchUser();
-}, [userName]);
+    return acc;
+  }, []);
 
-
+  // repo sorting based on star count
+  const topRepos = [...repos].sort(
+    (a, b) => b.stargazers_count - a.stargazers_count
+  );
   return (
     <Box className="dashboard-container">
       <Grid container spacing={3}>
@@ -110,7 +153,7 @@ useEffect(() => {
               <Paper className="glass-card stat-box">
                 <Typography className="label">Total Stars</Typography>
                 <Box className="val-row">
-                  <Typography variant="h3" className="val">1,240</Typography>
+                  <Typography variant="h3" className="val">{totalStars}</Typography>
                   <Star className="icon-star" />
                 </Box>
               </Paper>
@@ -120,60 +163,225 @@ useEffect(() => {
               <Paper className="glass-card stat-box">
                 <Typography className="label">Total Forks</Typography>
                 <Box className="val-row">
-                  <Typography variant="h3" className="val">310</Typography>
+                  <Typography variant="h3" className="val">{totalForks}</Typography>
                   <ForkLeft className="icon-fork" />
                 </Box>
               </Paper>
             </Grid>
             
             {/* Language Distribution Placeholder */}
-            <Grid item xs={12}>
+            {/* <Grid item xs={12}>
               <Paper className="glass-card chart-container">
                 <Typography className="label">Language Distribution</Typography>
                 <Box className="placeholder-chart">
-                   {/* You would insert a Recharts or Chart.js component here */}
-                   <div className="dummy-pie"></div>
-                   <div className="chart-legend">
-                      <p><span></span> TypeScript 45%</p>
-                      <p><span></span> JavaScript 30%</p>
-                   </div>
+                   <LanguagePieChart/>
                 </Box>
               </Paper>
-            </Grid>
+            </Grid> */}
+          <Grid item xs={12} >
+              <Paper
+                className="glass-card chart-container"
+                sx={{
+                  p: 2,
+                  minHeight: "100px",
+                }}
+              >
+              
+             <Typography
+                className="label"
+                sx={{
+                  mb: 1,
+                  fontSize: "1.2rem",
+                  fontWeight: "bold",
+                  color: "#fff",
+                }}
+              >
+                Language Distribution
+              </Typography>
+
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: { xs: "column", md: "row" },
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  gap: 0,
+                }}
+              >
+                
+                {/* PIE CHART */}
+              <Box
+                sx={{
+                  width: "45%",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                  <LanguagePieChart data={languageData}/>
+                </Box>
+                {/* Legends */}
+              <Box
+                    sx={{
+                      width: "55%",
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "flex-start",
+                      justifyContent: "center",
+                      gap: 0,
+                    }}
+                  >
+                    {languageData.map((lang, index) => {
+                      const colors = [
+                        "#3b82f6",
+                        "#facc15",
+                        "#38bdf8",
+                        "#fb7185",
+                        "#00ff88",
+                      ];
+
+                      return (
+                        <Box
+                          key={lang.name}
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 1,
+                          }}
+                        >
+                          <Box
+                            sx={{
+                              width: 12,
+                              height: 12,
+                              borderRadius: "50%",
+                              backgroundColor: colors[index % colors.length],
+                            }}
+                          />
+
+                          <Typography sx={{ color: "#fff" }}>
+                            {lang.name}
+                          </Typography>
+                        </Box>
+                      );
+                    })}
+                  </Box>
+                </Box>
+            </Paper>
+          </Grid>
 
             {/* Commit Activity Placeholder */}
-            <Grid item xs={12}>
-              <Paper className="glass-card activity-container">
-                <Typography className="label">Commit Activity</Typography>
-                <div className="heatmap-placeholder"></div>
-              </Paper>
-            </Grid>
+         <Grid item xs={12} sx={{ mt: 1 }}>
+            <Paper
+              className="glass-card chart-container"
+              sx={{
+                padding: 2,
+                overflowX: "auto",
+              }}
+            >
+              <Typography className="label" sx={{ mb: 2 }}>
+                Commit Activity
+              </Typography>
+
+              <Box
+                sx={{
+                  width: "100%",
+                  display: "flex",
+                  justifyContent: "center",
+                }}
+              >
+                <GitHubCalendar
+                  username={userName}
+                  blockSize={12}
+                  blockMargin={4}
+                  fontSize={14}
+                  colorScheme="dark"
+                />
+              </Box>
+            </Paper>
           </Grid>
+        </Grid>
         </Grid>
 
         {/* RIGHT SECTION: Repository Insights */}
-        <Grid item xs={12} md={3}>
-          <Paper className="glass-card repo-panel">
-            <Typography variant="h6" className="text-white mb-2">Repository Insights</Typography>
-            <Typography variant="caption" className="text-muted">Top Repositories (Sorted by Stars)</Typography>
-            
-            <Box className="repo-list">
-              {[1, 2, 3].map((item) => (
-                <Box key={item} className="repo-item">
-                  <Typography className="repo-name">awesome-project</Typography>
-                  <Box className="repo-meta">
-                    <span className="lang-dot"></span> 
-                    <Typography variant="caption">TypeScript</Typography>
-                    <Typography variant="caption">⭐ 450</Typography>
+      <Grid item xs={12} md={3}>
+        <Paper
+          className="glass-card repo-panel"
+          sx={{
+            height: "70vh",
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <Typography
+            variant="h6"
+            className="text-white mb-2"
+          >
+            Repository Insights
+          </Typography>
+
+          <Typography
+            variant="caption"
+            className="text-muted"
+            sx={{ mb: 2 }}
+          >
+            Top Repositories (Sorted by Stars)
+          </Typography>
+
+          {/* SCROLLABLE AREA */}
+              <Box
+                className="repo-list"
+                sx={{
+                  overflowY: "auto",
+                  pr: 1,
+                  flex: 1,
+
+                  /* scrollbar styling */
+                  "&::-webkit-scrollbar": {
+                    width: "6px",
+                  },
+
+                  "&::-webkit-scrollbar-track": {
+                    background: "transparent",
+                  },
+
+                  "&::-webkit-scrollbar-thumb": {
+                    background: "#7c3aed",
+                    borderRadius: "10px",
+                  },
+                }}
+              >
+                {topRepos.map((repo) => (
+                  <Box
+                    key={repo.id}
+                    className="repo-item"
+                  >
+                    <Typography className="repo-name">
+                      {repo.name}
+                    </Typography>
+
+                    <Box className="repo-meta">
+                      <span className="lang-dot"></span>
+
+                      <Typography variant="caption">
+                        {repo.language || "Unknown"}
+                      </Typography>
+
+                      <Typography variant="caption">
+                        ⭐ {repo.stargazers_count}
+                      </Typography>
+                    </Box>
+
+                    <Typography
+                      variant="caption"
+                      className="repo-desc"
+                    >
+                      {repo.description || "No description"}
+                    </Typography>
                   </Box>
-                  <Typography variant="caption" className="repo-desc">
-                    A curated list of modern dev tools.
-                  </Typography>
-                </Box>
-              ))}
-            </Box>
-          </Paper>
-        </Grid>
+                ))}
+              </Box>
+            </Paper>
+          </Grid>
 
       </Grid>
     </Box>
