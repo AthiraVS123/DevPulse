@@ -1,8 +1,8 @@
-name: Deploy static content to Pages
+name: Deploy Vite App
 
 on:
   push:
-    branches: ["main"] # Ningaluse branch name 'master' aano ennu check cheyyuka
+    branches: ["main"] # നിങ്ങളുടെ ബ്രാഞ്ച് 'master' ആണെങ്കിൽ ഇവിടെ 'master' എന്ന് മാറ്റുക
 
 permissions:
   contents: read
@@ -17,7 +17,7 @@ jobs:
   deploy:
     environment:
       name: github-pages
-      url: ${{ steps: deployment.outputs.page_url }}
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -32,16 +32,13 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build
+      - name: Build project
         run: npm run build
-
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './dist' # Vite build output general aayi 'dist' folder-il aanu varuka
+          path: './dist'
 
       - name: Deploy to GitHub Pages
         id: deployment
